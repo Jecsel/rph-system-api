@@ -1,0 +1,20 @@
+version: '2'
+services:
+  db:
+    image: postgres:9.4.5
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  app:
+    build: .
+    environment:
+      RAILS_ENV: $RAILS_ENV
+    ports:
+      - "3000:3000"
+    command: bundle exec rails s -b 0.0.0.0
+    volumes:
+      - .:/rph-system-api
+    depends_on:
+      - db
+volumes:
+  postgres-data:
+    driver: local
