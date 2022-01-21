@@ -1,0 +1,2 @@
+class ClinicalRecordResult < ApplicationRecord
+end

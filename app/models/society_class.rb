@@ -1,0 +1,2 @@
+class SocietyClass < ApplicationRecord
+end

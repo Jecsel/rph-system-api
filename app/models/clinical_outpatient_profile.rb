@@ -1,0 +1,2 @@
+class ClinicalOutpatientProfile < ApplicationRecord
+end

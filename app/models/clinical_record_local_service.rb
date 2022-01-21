@@ -1,0 +1,2 @@
+class ClinicalRecordLocalService < ApplicationRecord
+end

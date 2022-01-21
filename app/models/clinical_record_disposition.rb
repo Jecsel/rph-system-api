@@ -1,0 +1,2 @@
+class ClinicalRecordDisposition < ApplicationRecord
+end

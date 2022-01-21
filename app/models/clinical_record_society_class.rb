@@ -1,0 +1,2 @@
+class ClinicalRecordSocietyClass < ApplicationRecord
+end
