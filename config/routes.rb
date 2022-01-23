@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :user, only: [:index] do
     collection do
       post 'update_user'
+      post 'deactivate_user'
     end
   end
 
@@ -30,6 +31,10 @@ Rails.application.routes.draw do
   end
 
   resources :clinical_record, only: [:index, :create, :show] do
+
+  end
+
+  resources :patient, only: [:index, :create, :show] do
 
   end
   

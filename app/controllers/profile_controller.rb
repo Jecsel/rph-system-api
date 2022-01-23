@@ -51,7 +51,7 @@ class ProfileController < ApplicationController
                 surname: update_params[:surname],
                 first_name: update_params[:first_name],
                 middle_name: update_params[:middle_name],
-                dob: f_bod,
+                dob: update_params[:bod],
                 age: update_params[:age],
                 birth_place: update_params[:birth_place],
                 gender_id: update_params[:gender_id],
