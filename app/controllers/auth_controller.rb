@@ -19,7 +19,7 @@ class AuthController < ApplicationController
         user.user_token = Generator.new().generate_alpha_numeric
         user.save!
         @bearer_token = encode({user_id: user.id,secret: user.user_token})
-        render json: { bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile, profile_id: user.profile },status:200
+        render json: { bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile, profile_id: user.profile.id },status:200
       else
         p "invalid pass"
         invalid_account

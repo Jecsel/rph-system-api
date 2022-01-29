@@ -2,7 +2,7 @@ class UserController < ApplicationController
     before_action :must_be_authenticated 
 
     def index
-        users = User.all.where(is_active: true)
+        users = User.all.where(is_active: true).order('created_at DESC')
         render json: { user:users },status: 200
     end
 

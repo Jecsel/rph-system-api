@@ -2,7 +2,7 @@ class ProfileController < ApplicationController
     before_action :must_be_authenticated
 
     def index
-        @profiles = Profile.all
+        @profiles = Profile.all.order('created_at DESC')
         render json: {profiles: @profiles},status: 200
     end
 
@@ -15,7 +15,7 @@ class ProfileController < ApplicationController
                     surname: create_params[:surname],   
                     first_name: create_params[:first_name],
                     middle_name: create_params[:middle_name],
-                    dob: create_params[:dob],
+                    dob: create_params[:dob].to_date + 1.days,
                     age: create_params[:age],
                     birth_place: create_params[:birth_place],
                     gender_id: create_params[:gender_id],
@@ -51,7 +51,7 @@ class ProfileController < ApplicationController
                 surname: update_params[:surname],
                 first_name: update_params[:first_name],
                 middle_name: update_params[:middle_name],
-                dob: update_params[:bod],
+                dob: update_params[:dob].to_date + 1.days,
                 age: update_params[:age],
                 birth_place: update_params[:birth_place],
                 gender_id: update_params[:gender_id],
@@ -78,7 +78,13 @@ class ProfileController < ApplicationController
 
     def show
         profile = Profile.find params[:id]
-        render json: {profile: profile}
+        render json: {profile: profile}, status: 200
+    end
+
+    def get_user_profile
+        p @current_user
+        profile = @current_user.profile
+        render json: {profile: profile}, status: 200
     end
 
     def has_profile

@@ -28,10 +28,12 @@ Rails.application.routes.draw do
   resources :profile, only: [:index, :create, :show] do
     post 'has_profile'
     post 'update_profile'
+    post 'get_user_profile'
   end
 
   resources :clinical_record, only: [:index, :create, :show] do
-
+    post 'patient_clinical_records'
+    post 'update_clinical_record'
   end
 
   resources :patient, only: [:index, :create, :show] do
