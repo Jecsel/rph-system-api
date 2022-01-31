@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_18_014813) do
+ActiveRecord::Schema.define(version: 2022_01_29_155147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 2022_01_18_014813) do
     t.string "person_to_notify_cp_relationship"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "address"
     t.index ["clinical_record_id"], name: "index_clinical_outpatient_profiles_on_clinical_record_id"
   end
 
@@ -181,6 +182,7 @@ ActiveRecord::Schema.define(version: 2022_01_18_014813) do
     t.string "person_to_notify_cp_relationship"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "address"
   end
 
   create_table "results", force: :cascade do |t|
@@ -216,6 +218,7 @@ ActiveRecord::Schema.define(version: 2022_01_18_014813) do
     t.boolean "is_active"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "building_id"
     t.index ["user_role_id"], name: "index_users_on_user_role_id"
     t.index ["user_type_id"], name: "index_users_on_user_type_id"
   end

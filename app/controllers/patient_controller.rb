@@ -33,6 +33,7 @@ class PatientController < ApplicationController
                         middle_name: create_params[:middle_name],
                         dob: create_params[:dob].to_date + 1.days,
                         age: create_params[:age],
+                        address: create_params[:address],
                         birth_place: create_params[:birth_place],
                         gender_id: create_params[:gender_id],
                         civil_status_id: create_params[:civil_status_id],
@@ -69,7 +70,7 @@ class PatientController < ApplicationController
     def create_params
         params
             .require(:profile)
-            .permit(:surname, :first_name, :middle_name, :dob, :age, :birth_place, :gender_id, :civil_status_id, :occupation, :religion, :nationality, :cp_no, :employed_by, :person_to_notify, :person_to_notify_address, :person_to_notify_no, :person_to_notify_cp_relationship)
+            .permit(:surname, :first_name, :middle_name, :dob, :age, :birth_place, :address, :gender_id, :civil_status_id, :occupation, :religion, :nationality, :cp_no, :employed_by, :person_to_notify, :person_to_notify_address, :person_to_notify_no, :person_to_notify_cp_relationship)
 
     end
 end

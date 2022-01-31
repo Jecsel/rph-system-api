@@ -3,6 +3,7 @@ class User < ApplicationRecord
     has_one             :profile
     belongs_to          :user_type
     belongs_to          :user_role
+    belongs_to          :building
     has_many            :clinical_record
     
     def valid_password? password

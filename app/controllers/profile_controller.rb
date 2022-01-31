@@ -18,6 +18,7 @@ class ProfileController < ApplicationController
                     dob: create_params[:dob].to_date + 1.days,
                     age: create_params[:age],
                     birth_place: create_params[:birth_place],
+                    address: create_params[:address],
                     gender_id: create_params[:gender_id],
                     civil_status_id: create_params[:civil_status_id],
                     occupation: create_params[:occupation],
@@ -54,6 +55,7 @@ class ProfileController < ApplicationController
                 dob: update_params[:dob].to_date + 1.days,
                 age: update_params[:age],
                 birth_place: update_params[:birth_place],
+                address: update_params[:address],
                 gender_id: update_params[:gender_id],
                 civil_status_id: update_params[:civil_status_id],
                 occupation: update_params[:occupation],
@@ -100,12 +102,12 @@ class ProfileController < ApplicationController
     def create_params
         params
             .require(:profile)
-            .permit(:user_id, :surname, :first_name, :middle_name, :dob, :age, :birth_place, :gender_id, :civil_status_id, :occupation, :religion, :nationality, :cp_no, :employed_by, :person_to_notify, :person_to_notify_address, :person_to_notify_no, :person_to_notify_cp_relationship)
+            .permit(:user_id, :surname, :first_name, :middle_name, :dob, :age, :birth_place, :address, :gender_id, :civil_status_id, :occupation, :religion, :nationality, :cp_no, :employed_by, :person_to_notify, :person_to_notify_address, :person_to_notify_no, :person_to_notify_cp_relationship)
     end
 
     def update_params
         params
             .require(:profile)
-            .permit(:user_id, :surname, :first_name, :middle_name, :dob, :age, :birth_place, :gender_id, :civil_status_id, :occupation, :religion, :nationality, :cp_no, :employed_by, :person_to_notify, :person_to_notify_address, :person_to_notify_no, :person_to_notify_cp_relationship,:id)
+            .permit(:user_id, :surname, :first_name, :middle_name, :dob, :age, :birth_place, :address, :gender_id, :civil_status_id, :occupation, :religion, :nationality, :cp_no, :employed_by, :person_to_notify, :person_to_notify_address, :person_to_notify_no, :person_to_notify_cp_relationship,:id)
     end
 end

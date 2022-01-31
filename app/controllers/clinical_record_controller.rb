@@ -8,6 +8,8 @@ class ClinicalRecordController < ApplicationController
 
     def create
         begin
+            p "passok-------"
+            p create_params[:patient_id]
             clinical_record = ClinicalRecord.new
             clinical_record.patient_id = create_params[:patient_id]
             clinical_record.attending_physician_id = create_params[:attending_physician_id]
@@ -21,6 +23,7 @@ class ClinicalRecordController < ApplicationController
             clinical_record.final_diagnosis = create_params[:final_diagnosis]
             clinical_record.management_operations = create_params[:management_operations]
             clinical_record.save
+            
 
             if clinical_record.save!
                 create_params[:departments].each do |dept|
@@ -64,12 +67,12 @@ class ClinicalRecordController < ApplicationController
                     dispo.desc = dis[:desc]
                     dispo.save
                 end
-
-                profile = User.find(create_params[:patient_id]).profile
-
+                
+                profile = Profile.find(create_params[:profile_id])
+                
                 cor_profile = ClinicalOutpatientProfile.new
                 cor_profile.clinical_record_id = clinical_record[:id]
-                cor_profile.user_id = clinical_record[:patient_id],
+                cor_profile.user_id = profile[:user_id],
                 cor_profile.surname =  profile[:surname],
                 cor_profile.first_name = profile[:first_name],
                 cor_profile.middle_name = profile[:middle_name],
@@ -88,9 +91,12 @@ class ClinicalRecordController < ApplicationController
                 cor_profile.person_to_notify_no = profile[:person_to_notify_no],
                 cor_profile.person_to_notify_cp_relationship = profile[:person_to_notify_cp_relationship]
                 cor_profile.save
+
+                clinical_record.update(patient_id: profile[:user_id])
+                cor_profile.update(user_id: profile[:user_id])
             end
 
-            render json: {message: 'Clinical Record Created', profile: clinical_record},status: 200
+            render json: {message: 'Clinical Record Created', clinical_record: clinical_record},status: 200
         rescue StandardError => e
             p e.to_s
             render json: {
@@ -132,6 +138,7 @@ class ClinicalRecordController < ApplicationController
 
     def update_clinical_record
         begin
+            p update_params[:clinical_record_id]
             clinical_record = ClinicalRecord.find(update_params[:clinical_record_id])
             clinical_record.patient_id = update_params[:patient_id]
             clinical_record.attending_physician_id = update_params[:attending_physician_id]
@@ -147,46 +154,32 @@ class ClinicalRecordController < ApplicationController
             clinical_record.save
 
             if clinical_record.save!
+                
                 update_params[:departments].each do |dept|
-                    c_department = ClinicalRecordDepartment.new
-                    c_department.clinical_record_id = clinical_record[:id]
-                    c_department.department_id = dept[:department_id]
-                    c_department.is_selected = dept[:is_selected]
-                    c_department.save
+                    c_department = ClinicalRecordDepartment.find(dept[:id])
+                    c_department.update(is_selected: dept[:is_selected])
                 end
                 
                 update_params[:society_classes].each do |soc|
-                    soc_class = ClinicalRecordSocietyClass.new
-                    soc_class.clinical_record_id = clinical_record[:id]
-                    soc_class.society_class_id = soc[:society_class_id]
-                    soc_class.is_selected = soc[:is_selected]
-                    soc_class.save
+                    p "======= update dispo id ======"
+                    soc_class = ClinicalRecordSocietyClass.find(soc[:id])
+                    p soc_class
+                    soc_class.update(is_selected: soc[:is_selected])
                 end
 
                 update_params[:local_services].each do |loc|
-                    loc_service = ClinicalRecordLocalService.new
-                    loc_service.clinical_record_id = clinical_record[:id]
-                    loc_service.local_service_id = loc[:local_service_id]
-                    loc_service.is_selected = loc[:is_selected]
-                    loc_service.desc = loc[:desc]
-                    loc_service.save
+                    loc_service = ClinicalRecordLocalService.find(loc[:id])
+                    loc_service.update(is_selected: loc[:is_selected], desc: loc[:desc])
                 end
 
                 update_params[:results].each do |res|
-                    result = ClinicalRecordResult.new
-                    result.clinical_record_id = clinical_record[:id]
-                    result.result_id = res[:result_id]
-                    result.is_selected = res[:is_selected]
-                    result.save
+                    result = ClinicalRecordResult.find(res[:id])
+                    result.update(is_selected: res[:is_selected])
                 end
 
                 update_params[:dispositions].each do |dis|
-                    dispo = ClinicalRecordDisposition.new
-                    dispo.clinical_record_id = clinical_record[:id]
-                    dispo.disposition_id = dis[:desposition_id]
-                    dispo.is_selected = dis[:is_selected]
-                    dispo.desc = dis[:desc]
-                    dispo.save
+                    dispo = ClinicalRecordDisposition.find(dis[:id])
+                    dispo.update(is_selected: dis[:is_selected], desc: dis[:desc])
                 end
             end
 
@@ -206,17 +199,17 @@ class ClinicalRecordController < ApplicationController
             .require(:clinical_record)
             .permit(:clinical_record_id,:patient_id, :attending_physician_id, :prepared_by_id, :fiscal_year, :hospital_no, :building_id,
                 :admitted_datetime, :transferred_from, :admitting_diagnosis, :final_diagnosis, :management_operations,
-                :departments => [:department_id, :is_selected],
-                :society_classes => [:society_class_id, :is_selected],
-                :local_services => [:local_service_id, :is_selected, :desc],
-                :results => [:result_id, :is_selected],
-                :dispositions => [:disposition_id, :is_selected, :desc])
+                :departments => [:id, :department_id, :is_selected],
+                :society_classes => [:id, :society_class_id, :is_selected],
+                :local_services => [:id, :local_service_id, :is_selected, :desc],
+                :results => [:id, :result_id, :is_selected],
+                :dispositions => [:id, :disposition_id, :is_selected, :desc])
     end
     
     def create_params
         params
             .require(:clinical_record)
-            .permit(:patient_id, :attending_physician_id, :prepared_by_id, :fiscal_year, :hospital_no, :building_id,
+            .permit(:profile_id, :patient_id, :attending_physician_id, :prepared_by_id, :fiscal_year, :hospital_no, :building_id,
                 :admitted_datetime, :transferred_from, :admitting_diagnosis, :final_diagnosis, :management_operations,
                 :departments => [:department_id, :is_selected],
                 :society_classes => [:society_class_id, :is_selected],
