@@ -6,7 +6,7 @@ class ApplicationController < ActionController::API
     end
 
     def ping
-        render json: {message:"Server is Up!!!"}
+        render json: {message:"Server is Up V2!!!"}
     end
 
     def must_be_authenticated
