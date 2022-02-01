@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_29_155147) do
+ActiveRecord::Schema.define(version: 2022_02_01_005801) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,59 @@ ActiveRecord::Schema.define(version: 2022_01_29_155147) do
 
   create_table "local_services", force: :cascade do |t|
     t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "outpatient_clinic_services", force: :cascade do |t|
+    t.bigint "outpatient_record_id"
+    t.bigint "clinic_service_id"
+    t.boolean "is_true"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "outpatient_clinics", force: :cascade do |t|
+    t.bigint "outpatient_record_id"
+    t.bigint "clinic_id"
+    t.boolean "is_true"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "outpatient_record_remarks", force: :cascade do |t|
+    t.bigint "outpatient_record_id"
+    t.bigint "doctor_on_duty_id"
+    t.date "record_date"
+    t.string "time_of_arrival"
+    t.string "time_of_discharge"
+    t.text "diagnosis"
+    t.string "service_of_treatment"
+    t.string "doctor_on_duty"
+    t.text "remarks"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "outpatient_records", force: :cascade do |t|
+    t.bigint "patient_id"
+    t.bigint "physician_id"
+    t.bigint "clinic_id"
+    t.bigint "clinic_service_id"
+    t.bigint "clinical_record_id"
+    t.string "payees_person_to_notify"
+    t.string "referred_by"
+    t.string "relations_to_patient"
+    t.string "note_to_allergies"
+    t.string "is_release"
+    t.string "noi"
+    t.string "poi"
+    t.string "doi"
+    t.string "toi"
+    t.string "assailant"
+    t.string "nearest_kin"
+    t.string "patient_brought_victim"
+    t.string "address"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

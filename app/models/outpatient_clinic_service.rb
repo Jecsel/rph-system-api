@@ -1,0 +1,2 @@
+class OutpatientClinicService < ApplicationRecord
+end

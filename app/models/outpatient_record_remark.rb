@@ -1,0 +1,2 @@
+class OutpatientRecordRemark < ApplicationRecord
+end

@@ -39,5 +39,13 @@ Rails.application.routes.draw do
   resources :patient, only: [:index, :create, :show] do
 
   end
+
+  resources :outpatient_record, only: [:index, :create, :show] do
+    post 'update'
+  end
+
+  resources :dashboard, only: [:index] do
+
+  end
   
 end
