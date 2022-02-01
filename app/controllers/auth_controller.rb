@@ -39,13 +39,8 @@ class AuthController < ApplicationController
 
     if !User.exists?(username: create_params[:username])
 
-      @user           = User.new
-      @user.username  = create_params[:username]
-      @user.password  = create_params[:password]
-      @user.user_type_id = 1
-      @user.user_role_id = 1
-      @user.is_active = true
-      @user.save
+      @user = User.create(username: create_params[:username], password: create_params[:password], user_type_id: create_params[:user_type_id], user_role_id:create_params[:user_role_id], building_id: create_params[:building_id], is_active: true)
+
       render json: { message: "Successfully registered", status: true }
     else
       code_500("Username already exists.")
@@ -94,6 +89,6 @@ class AuthController < ApplicationController
   end
 
   def create_params
-    params.require(:user).permit(:username, :password, :user_type_id, :user_role_id)
+    params.require(:user).permit(:username, :password, :user_type_id, :user_role_id, :building_id)
   end
 end
