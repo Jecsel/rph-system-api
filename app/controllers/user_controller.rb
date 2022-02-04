@@ -15,6 +15,7 @@ class UserController < ApplicationController
                     password: Digest::MD5.hexdigest(update_params[:password])[0..19],
                     user_role_id: update_params[:user_role_id],
                     user_type_id: update_params[:user_type_id],
+                    building_id: update_params[:building_id],
                     is_active: update_params[:is_active])
                 json_response(200, "User Updated")
             else
@@ -23,6 +24,7 @@ class UserController < ApplicationController
                     password: update_params[:password],
                     user_role_id: update_params[:user_role_id],
                     user_type_id: update_params[:user_type_id],
+                    building_id: update_params[:building_id],
                     is_active: update_params[:is_active])
                 json_response(200, "User Updated")
             end
@@ -33,8 +35,9 @@ class UserController < ApplicationController
 
     def deactivate_user
         begin
-            user = User.find_by_id(params[:id])
-            user.update(is_active: false)
+            user = User.find(params[:id])
+            p user
+            user.update(user_type_id: 1, user_role_id: 1, building_id:1,is_active: false)
             json_response(200, "User Deleted")
         rescue StandardError => e
             p e.to_s
@@ -47,10 +50,10 @@ class UserController < ApplicationController
     private
 
     def user_params
-        params.require(:user).permit(:user_id, :user_role_id, :user_type_id, :is_active)
+        params.require(:user).permit(:user_id, :user_role_id, :user_type_id, :building_id, :is_active)
     end
 
     def update_params
-        params.require(:user).permit(:id, :username, :password, :user_token, :user_role_id, :user_type_id, :is_active)
+        params.require(:user).permit(:id, :username, :password, :user_token, :user_role_id, :user_type_id, :is_active, :building_id)
     end
 end

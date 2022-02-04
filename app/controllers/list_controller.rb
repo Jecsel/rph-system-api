@@ -12,5 +12,6 @@ class ListController < ApplicationController
         @departments = Department.all
         @society_classes = SocietyClass.all
         @genders = Gender.all
+        @buildings = Building.all
     end
 end

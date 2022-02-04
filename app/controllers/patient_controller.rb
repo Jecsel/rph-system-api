@@ -16,14 +16,17 @@ class PatientController < ApplicationController
 
     def create
         begin
-            if !User.exists?(username: create_params[:first_name])
+            if User.where(username: create_params[:first_name]).count == 0
                 user = User.create(
                     username: create_params[:first_name],
                     password: 'rph12345678',
                     user_type_id: 1,
                     user_role_id: 1,
+                    building_id: 1,
                     is_active: true
                 )
+                p "========"
+                p user
 
                 if user.profile.nil?
                     profile = Profile.create(
@@ -52,7 +55,7 @@ class PatientController < ApplicationController
                     render json: {message: 'Already have a profile', profile: profile, profile_id: profile.id},status: 200
                 end
             else
-                render json: {message: 'Username Already Taken', profile: profile, profile_id: profile.id},status: 200
+                render json: {message: 'Username Already Taken'},status: 200
             end
         rescue StandardError => e
             p e.to_s
