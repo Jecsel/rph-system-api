@@ -5,6 +5,7 @@ class User < ApplicationRecord
     belongs_to          :user_role
     belongs_to          :building
     has_many            :clinical_record
+    has_many            :outpatient_record
     
     def valid_password? password
         self.password === Digest::MD5.hexdigest(password)[0..19]

@@ -14,4 +14,9 @@ class ListController < ApplicationController
         @genders = Gender.all
         @buildings = Building.all
     end
+
+    def get_all_doctor
+        @doctors = User.where(user_type_id:3)
+    end
+
 end

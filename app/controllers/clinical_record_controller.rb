@@ -124,6 +124,25 @@ class ClinicalRecordController < ApplicationController
         end
     end
 
+    def filter_clinical
+        begin
+            @clinical_records = []
+            @records = []
+            if params[:building_id] == 0
+                @clinical_records = ClinicalRecord.all.order('created_at DESC')
+            else
+                @clinical_records = ClinicalRecord.where(building_id: params[:building_id]).order('created_at DESC')
+            end
+    
+            render json: {clinical_records: @clinical_records},status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
     def patient_clinical_records
         begin
             p_clinical_records = ClinicalRecord.where(patient_id: params[:user_id]).order('created_at DESC')

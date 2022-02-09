@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   end
 
   resources :list, only: [:index] do
-    
+    get 'get_all_doctor'
   end
 
   resources :profile, only: [:index, :create, :show] do
@@ -34,14 +34,17 @@ Rails.application.routes.draw do
   resources :clinical_record, only: [:index, :create, :show] do
     post 'patient_clinical_records'
     post 'update_clinical_record'
+    post 'filter_clinical'
   end
 
   resources :patient, only: [:index, :create, :show] do
-
+    post 'filter_patient'
+    post 'patient_search'
   end
 
   resources :outpatient_record, only: [:index, :create, :show] do
     post 'update'
+    get 'show_patient_outpatient_records'
   end
 
   resources :dashboard, only: [:index] do

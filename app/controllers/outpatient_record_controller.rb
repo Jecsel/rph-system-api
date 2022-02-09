@@ -29,6 +29,19 @@ class OutpatientRecordController < ApplicationController
         end
     end
 
+    def show_patient_outpatient_records
+        begin
+            outpatient_record = OutpatientRecord.where(patient_id: params[:outpatient_record_id])
+            render json: {outpatient_records: outpatient_record},status: 200
+
+        rescue StandardError => e
+            p e.to_s
+            # render json: {
+            #     error: e.to_s
+            # }, status: 500
+        end
+    end
+
     def create
         begin
             outpatient_record = OutpatientRecord.create(
@@ -86,7 +99,6 @@ class OutpatientRecordController < ApplicationController
     def update
         outpatient_record = OutpatientRecord.find(update_params[:outpatient_record_id])
         outpatient_record.update(
-            patient_id: update_params[:patient_id], 
             physician_id: update_params[:physician_id],
             clinic_id: update_params[:clinic_id],
             clinic_service_id: update_params[:clinic_service_id],
@@ -105,19 +117,24 @@ class OutpatientRecordController < ApplicationController
             patient_brought_victim: update_params[:patient_brought_victim],
             address: update_params[:address]
         )
-
+        p "clinics"
+        p update_params[:clinics]
         update_params[:clinics].each do |c|
-            clinic = OutpatientClinic.find(c[:clinic_id])
+            clinic = OutpatientClinic.find(c[:id])
             clinic.update(is_true: c[:is_true])
         end
 
+        p "clinic_services"
+        p update_params[:clinic_services]
         update_params[:clinic_services].each do |s|
-            service = OutpatientClinicService.find(s[:clinic_service_id])
+            service = OutpatientClinicService.find(s[:id])
             service.update(is_true: s[:is_true])
         end
 
+        p "outpatient_record_remarks"
+        p update_params[:outpatient_record_remarks]
         update_params[:outpatient_record_remarks].each do |mark|
-            outpatient_record_remark = OutpatientRecordRemark.find(mark[:outpatient_record_remark_id])
+            outpatient_record_remark = OutpatientRecordRemark.find(mark[:id])
             outpatient_record_remark.update(
                 doctor_on_duty_id: mark[:doctor_on_duty_id],
                 record_date: mark[:record_date],
@@ -145,7 +162,7 @@ class OutpatientRecordController < ApplicationController
     def update_params
         params
             .require(:outpatient_record)
-            .permit(:outpatient_record_id, :patient_id, :physician_id, :clinical_record_id,:payees_person_to_notify,:referred_by,:relations_to_patient,:relations_to_patient,:note_to_allergies,:is_release,:noi,:poi,:doi,:toi,:assailant,:nearest_kin,:patient_brought_victim,:address,:clinics => [:clinic_id, :is_true], :clinic_services => [:clinic_service_id, :is_true],:outpatient_record_remarks => [:outpatient_record_remark_id, :outpatient_record_id,:doctor_on_duty_id,:record_date,:time_of_arrival,:time_of_discharge,:diagnosis, :service_of_treatment,:doctor_on_duty,:remarks])
+            .permit(:outpatient_record_id, :patient_id, :physician_id, :clinical_record_id,:payees_person_to_notify,:referred_by,:relations_to_patient,:relations_to_patient,:note_to_allergies,:is_release,:noi,:poi,:doi,:toi,:assailant,:nearest_kin,:patient_brought_victim,:address,:clinics => [:id, :outpatient_record_id, :clinic_id, :is_true], :clinic_services => [:id, :outpatient_record_id, :clinic_service_id, :is_true],:outpatient_record_remarks => [:id, :outpatient_record_id, :outpatient_record_remark_id, :outpatient_record_id,:doctor_on_duty_id,:record_date,:time_of_arrival,:time_of_discharge,:diagnosis, :service_of_treatment,:doctor_on_duty,:remarks])
     end
 
 

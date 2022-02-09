@@ -7,7 +7,9 @@ class PatientController < ApplicationController
         
         @users.each do |user|
             if user.profile.present?
-                @patients << user.profile
+                u = user.profile
+                # u.building = user.building_id
+                @patients << u
             end
         end
 
@@ -66,6 +68,44 @@ class PatientController < ApplicationController
     end
 
     def show
+    end
+
+    def filter_patient
+        begin
+            @patients = []
+            @users = []
+
+            if params[:building_id] == 0
+                @users = User.where(user_type_id: 1).order('created_at DESC')
+            else
+                @users = User.where(user_type_id: 1, building_id: params[:building_id]).order('created_at DESC')
+            end
+            
+            @users.each do |user|
+                if user.profile.present?
+                    u = user.profile
+                    @patients << u
+                end
+            end
+    
+            render json: { patients: @patients },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
+    def patient_search
+        
+        begin
+            @profiles = Profile.search(params[:search_key])
+            render json: { patients: @profiles },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: { error: e.to_s }, status: 500
+        end
     end
 
     private
