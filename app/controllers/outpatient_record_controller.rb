@@ -31,8 +31,20 @@ class OutpatientRecordController < ApplicationController
 
     def show_patient_outpatient_records
         begin
-            outpatient_record = OutpatientRecord.where(patient_id: params[:outpatient_record_id])
-            render json: {outpatient_records: outpatient_record},status: 200
+            records = []
+            outpatient_records = OutpatientRecord.where(patient_id: params[:outpatient_record_id]).order('created_at DESC')
+            outpatient_records.each do |outpatient|
+                p outpatient
+                records << { 
+                    record: outpatient,
+                    clinics: outpatient.outpatient_clinics,
+                    clinic_service: outpatient.outpatient_clinic_services,
+                    profile: User.find(outpatient[:patient_id]).profile,
+                    remarks: outpatient.outpatient_record_remarks}
+            end
+            render json: {outpatient_records: records},status: 200
+
+            # render json: {outpatient_records: outpatient_record},status: 200
 
         rescue StandardError => e
             p e.to_s
