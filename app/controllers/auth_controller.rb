@@ -13,21 +13,26 @@ class AuthController < ApplicationController
 
   def sign_in
     user = User.find_by_username user_params[:username]
+
     if user.present?
-        p user.valid_password?(user_params[:password])
-      if user.valid_password?(user_params[:password])
-        user.user_token = Generator.new().generate_alpha_numeric
-        user.save!
-        @bearer_token = encode({user_id: user.id,secret: user.user_token})
-        if user.has_profile
-          render json: { user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile, profile_id: user.profile.id },status:200
-        else
-          render json: { user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile},status:200
-        end
+      if !user.is_active
+        account_not_found
       else
-        p "invalid pass"
-        invalid_account
+        if user.valid_password?(user_params[:password])
+          user.user_token = Generator.new().generate_alpha_numeric
+          user.save!
+          @bearer_token = encode({user_id: user.id,secret: user.user_token})
+          if user.has_profile
+            render json: { user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile, profile_id: user.profile.id },status:200
+          else
+            render json: { user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile},status:200
+          end
+        else
+          p "invalid pass"
+          invalid_account
+        end
       end
+
     else
         p "NOT FOUND"
         account_not_found
