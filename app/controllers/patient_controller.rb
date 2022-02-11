@@ -3,7 +3,12 @@ class PatientController < ApplicationController
     
     def index
         @patients = []
-        @users = User.where(user_type_id: 1).order('created_at DESC')
+        if @current_user[:building_id] == 1
+            @users = User.where(user_type_id: 1, building_id: 1).order('created_at DESC')
+        else
+            @users = User.where(user_type_id: 1).order('created_at DESC')
+        end
+        
         
         @users.each do |user|
             if user.profile.present?
