@@ -40,6 +40,10 @@ Rails.application.routes.draw do
   resources :patient, only: [:index, :create, :show] do
     post 'filter_patient'
     post 'patient_search'
+    get 'show_all_nurses'
+    get 'show_all_doctors'
+    post 'create_nurse'
+    post 'create_doctor'
   end
 
   resources :outpatient_record, only: [:index, :create, :show] do

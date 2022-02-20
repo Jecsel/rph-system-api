@@ -1,7 +1,7 @@
 UserRole.create([{name:'guest'},{name: 'member'},{name:'admin'},{name:'super_admin'}])
 UserType.create([{name:'patient'},{name:'nurse'},{name:'doctor'},{name:'administrator'}])
 Gender.create([{name:'male'},{name: 'female'}])
-CivilStatus.create([{name: 'single'},{name: 'married'}])
+CivilStatus.create([{name: 'single'},{name: 'married'},{name: 'separated'},{name: 'widowed'},{name: 'divorce'}])
 Building.create([{name: 'building 1'}, {name: 'building 2'}])
 LocalService.create([{name: 'c1'},{name: 'c2'},{name: 'c3'}])
 Result.create([{name: 'recovered'},{name:'improved'},{name: 'unimproved'}, {name: 'died'}])

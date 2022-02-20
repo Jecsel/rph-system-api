@@ -115,7 +115,7 @@ class ClinicalRecordController < ApplicationController
                 local_services: clinical_record.clinical_record_local_service,
                 results: clinical_record.clinical_record_result,
                 dispositions: clinical_record.clinical_record_disposition,
-                profile: clinical_record.clinical_outpatient_profile},status: 200
+                profile: clinical_record.clinical_outpatient_profile.last},status: 200
         rescue StandardError => e
             p e.to_s
             render json: {

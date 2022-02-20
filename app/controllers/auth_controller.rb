@@ -14,28 +14,32 @@ class AuthController < ApplicationController
   def sign_in
     user = User.find_by_username user_params[:username]
 
-    if user.present?
-      if !user.is_active
-        account_not_found
-      else
-        if user.valid_password?(user_params[:password])
-          user.user_token = Generator.new().generate_alpha_numeric
-          user.save!
-          @bearer_token = encode({user_id: user.id,secret: user.user_token})
-          if user.has_profile
-            render json: { user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile, profile_id: user.profile.id },status:200
-          else
-            render json: { user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile},status:200
-          end
+    begin
+      if user.present?
+        if !user.is_active
+          account_not_found
         else
-          p "invalid pass"
-          invalid_account
+          if user.valid_password?(user_params[:password])
+            user.user_token = Generator.new().generate_alpha_numeric
+            user.save!
+            @bearer_token = encode({user_id: user.id,secret: user.user_token})
+            if user.has_profile
+              render json: { message:'Successfully login.', user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile, profile_id: user.profile.id },status:200
+            else
+              render json: { message:'Successfully login.', user: user, bearer_token: @bearer_token, user_id: user.id, has_profile: user.has_profile},status:200
+            end
+          else
+            p "invalid pass"
+            invalid_account
+          end
         end
+  
+      else
+          p "NOT FOUND"
+          account_not_found
       end
-
-    else
-        p "NOT FOUND"
-        account_not_found
+    rescue => exception
+      code_500("Server Error! Please contact your administration.")
     end
   end
 
@@ -48,7 +52,7 @@ class AuthController < ApplicationController
 
     if !User.exists?(username: create_params[:username])
 
-      @user = User.create(username: create_params[:username], password: create_params[:password], user_type_id: create_params[:user_type_id], user_role_id:create_params[:user_role_id], building_id: create_params[:building_id], is_active: true)
+      @user = User.create(username: create_params[:username], password: create_params[:password], user_type_id: 4, user_role_id: 4, building_id: create_params[:building_id], is_active: true)
 
       render json: { message: "Successfully registered", status: true }
     else
@@ -70,12 +74,12 @@ class AuthController < ApplicationController
   end
 
   def invalid_account
-    render json: {message:"Invalid Account"},status:403 #forbidden
+    render json: {message:"Incorrect password."},status:403 #forbidden
     return false
   end
 
   def account_not_found
-    render json: {message:"User Not Found"},status:404 #forbidden
+    render json: {message:"User Not Found."},status:404 #forbidden
     return false
   end
 

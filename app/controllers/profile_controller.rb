@@ -2,13 +2,19 @@ class ProfileController < ApplicationController
     before_action :must_be_authenticated
 
     def index
-        @profiles = Profile.all.order('created_at DESC')
-        render json: {profiles: @profiles},status: 200
+        begin
+            @profiles = Profile.all.order('created_at DESC')
+            render json: {profiles: @profiles},status: 200
+        rescue => exception
+            home
+            render json: {
+                error: e.to_s
+              }, status: 500
+        end
     end
 
     def create
         begin
-            p create_params
             if @current_user.profile.nil?
                 profile = Profile.create(
                     user_id: create_params[:user_id],
@@ -36,9 +42,8 @@ class ProfileController < ApplicationController
             else
                 render json: {message: 'Already have a profile', profile: profile, profile_id: profile.id},status: 200
             end
-            
         rescue StandardError => e
-            p e.to_s
+            home
             render json: {
                 error: e.to_s
               }, status: 500
@@ -71,7 +76,7 @@ class ProfileController < ApplicationController
             render json: { message: 'Profile Updated', profile: profile},status: 200
 
         rescue StandardError => e
-            p e.to_s
+            home
             render json: {
                 error: e.to_s
               }, status: 500
@@ -79,14 +84,22 @@ class ProfileController < ApplicationController
     end
 
     def show
-        profile = Profile.find params[:id]
-        render json: {profile: profile}, status: 200
+        begin
+            profile = Profile.find params[:id]
+            render json: {profile: profile}, status: 200
+        rescue => exception
+            home
+        end
     end
 
     def get_user_profile
-        p @current_user
-        profile = @current_user.profile
-        render json: {profile: profile}, status: 200
+        begin
+            profile = @current_user.profile
+            render json: {profile: profile}, status: 200
+        rescue => exception
+            home
+        end
+
     end
 
     def has_profile

@@ -2,7 +2,7 @@ class UserController < ApplicationController
     before_action :must_be_authenticated 
 
     def index
-        users = User.all.where(is_active: true).order('created_at DESC')
+        users = User.all.where(is_active: true, user_role_id: 4).order('created_at DESC')
         render json: { user:users },status: 200
     end
 
@@ -36,9 +36,13 @@ class UserController < ApplicationController
     def deactivate_user
         begin
             user = User.find(params[:id])
-            p user
-            user.update(user_type_id: 1, user_role_id: 1, building_id:1,is_active: false)
-            json_response(200, "User Deleted")
+            p params[:admin_password]
+            if @current_user.valid_password?(params[:admin_password])
+                user.update(user_type_id: 1, user_role_id: 1, building_id:1,is_active: false)
+                json_response(200, "Account successfully deleted.")
+            else
+                json_response(200, "Invalid admin password.")
+            end
         rescue StandardError => e
             p e.to_s
             render json: {
