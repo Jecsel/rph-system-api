@@ -42,8 +42,12 @@ Rails.application.routes.draw do
     post 'patient_search'
     get 'show_all_nurses'
     get 'show_all_doctors'
+    get 'show_all_admins'
     post 'create_nurse'
     post 'create_doctor'
+    post 'update_doctor_is_online'
+    post 'update_nurse_is_online'
+    post 'update_admin_is_online' 
   end
 
   resources :outpatient_record, only: [:index, :create, :show] do

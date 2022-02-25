@@ -44,6 +44,54 @@ class PatientController < ApplicationController
         render json: {patients: @doctors},status: 200
     end
 
+    def show_all_admins
+        @admins = []
+        @users = User.where(user_type_id: 4, is_active: true).order('created_at DESC')
+        @users.each do |user|
+            if user.profile.present?
+                u = user.profile
+                @admins << u
+            end
+        end
+        render json: {patients: @admins},status: 200
+    end
+
+    def update_doctor_is_online
+        begin
+            doc = Profile.find params[:id]
+            doc.update(is_online: params[:is_online])
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
+    def update_nurse_is_online
+        begin
+            nurse = Profile.find params[:id]
+            nurse.update(is_online: params[:is_online])
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
+    def update_admin_is_online
+        begin
+            admin = Profile.find params[:id]
+            admin.update(is_online: params[:is_online])
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
     def create
         begin
             a = ('A'..'Z').to_a.sample(10) 

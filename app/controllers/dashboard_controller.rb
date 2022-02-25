@@ -6,6 +6,9 @@ class DashboardController < ApplicationController
         @doctors = []
         @nurses = []
         @admins = []
+        online_doctors = []
+        online_admins = []
+        online_nurses = []
 
         doctor = User.where(user_type:3, is_active: true)
         patient = User.where(user_type:1, is_active: true)
@@ -27,6 +30,9 @@ class DashboardController < ApplicationController
         doctor.each do |doc|
             if doc.profile.present?
                 u = doc.profile
+                if u.is_online
+                    online_doctors << u
+                end
                 @doctors << u
             end
         end
@@ -34,6 +40,9 @@ class DashboardController < ApplicationController
         nurse.each do |nur|
             if nur.profile.present?
                 u = nur.profile
+                if u.is_online
+                    online_nurses << u
+                end
                 @nurses << u
             end
         end
@@ -41,6 +50,9 @@ class DashboardController < ApplicationController
         admin.each do |adm|
             if adm.profile.present?
                 u = adm.profile
+                if u.is_online
+                    online_admins << u
+                end
                 @admins << u
             end
         end
@@ -50,6 +62,9 @@ class DashboardController < ApplicationController
             patient: @patients.count,
             nurse: @nurses.count,
             admin: @admins.count,
+            online_doctors: online_doctors.count,
+            online_nurses: online_nurses.count,
+            online_admins: online_admins.count,
             recovered: recovered,
             improved: improved,
             unimproved: unimproved,
