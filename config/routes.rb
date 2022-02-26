@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     post 'has_profile'
     post 'update_profile'
     post 'get_user_profile'
+    get :avatar
   end
 
   resources :clinical_record, only: [:index, :create, :show] do
