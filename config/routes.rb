@@ -49,6 +49,12 @@ Rails.application.routes.draw do
     post 'update_doctor_is_online'
     post 'update_nurse_is_online'
     post 'update_admin_is_online' 
+    post 'filter_doctor'
+    post 'doctor_search'
+    post 'filter_nurse'
+    post 'nurse_search'
+    post 'filter_admin'
+    post 'admin_search'
   end
 
   resources :outpatient_record, only: [:index, :create, :show] do

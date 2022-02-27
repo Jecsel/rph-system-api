@@ -260,9 +260,9 @@ class PatientController < ApplicationController
             @users = []
 
             if params[:building_id] == 0
-                @users = User.where(user_type_id: 1).order('created_at DESC')
+                @users = User.where(user_type_id: 1, is_active: true).order('created_at DESC')
             else
-                @users = User.where(user_type_id: 1, building_id: params[:building_id]).order('created_at DESC')
+                @users = User.where(user_type_id: 1, is_active: true, building_id: params[:building_id]).order('created_at DESC')
             end
             
             @users.each do |user|
@@ -284,7 +284,157 @@ class PatientController < ApplicationController
     def patient_search
         
         begin
-            @profiles = Profile.search(params[:search_key])
+            @profiles = []
+            profiles = Profile.search(params[:search_key]).order('created_at DESC')
+
+            profiles.each do |pat|
+                u = User.find pat[:user_id]
+                if u.present? && u[:user_type_id] == 1 && u[:is_active] 
+                    @profiles << pat
+                end
+            end
+
+            render json: { patients: @profiles },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: { error: e.to_s }, status: 500
+        end
+    end
+
+    def filter_doctor
+        begin
+            @patients = []
+            @users = []
+
+            if params[:building_id] == 0
+                @users = User.where(user_type_id: 3, is_active: true).order('created_at DESC')
+            else
+                @users = User.where(user_type_id: 3, is_active: true, building_id: params[:building_id]).order('created_at DESC')
+            end
+            
+            @users.each do |user|
+                if user.profile.present?
+                    u = user.profile
+                    @patients << u
+                end
+            end
+    
+            render json: { patients: @patients },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
+    def doctor_search
+        
+        begin
+            @profiles = []
+            profiles = Profile.search(params[:search_key]).order('created_at DESC')
+
+            profiles.each do |pat|
+                u = User.find pat[:user_id]
+                if u.present? && u[:user_type_id] == 3 && u[:is_active] 
+                    @profiles << pat
+                end
+            end
+
+            render json: { patients: @profiles },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: { error: e.to_s }, status: 500
+        end
+    end
+
+    def filter_nurse
+        begin
+            @patients = []
+            @users = []
+
+            if params[:building_id] == 0
+                @users = User.where(user_type_id: 2, is_active: true).order('created_at DESC')
+            else
+                @users = User.where(user_type_id: 2, is_active: true, building_id: params[:building_id]).order('created_at DESC')
+            end
+            
+            @users.each do |user|
+                if user.profile.present?
+                    u = user.profile
+                    @patients << u
+                end
+            end
+    
+            render json: { patients: @patients },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
+    def nurse_search
+        
+        begin
+            @profiles = []
+            profiles = Profile.search(params[:search_key]).order('created_at DESC')
+
+            profiles.each do |pat|
+                u = User.find pat[:user_id]
+                if u.present? && u[:user_type_id] == 2 && u[:is_active] 
+                    @profiles << pat
+                end
+            end
+
+            render json: { patients: @profiles },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: { error: e.to_s }, status: 500
+        end
+    end
+
+    def filter_admin
+        begin
+            @patients = []
+            @users = []
+
+            if params[:building_id] == 0
+                @users = User.where(user_type_id: 4, is_active: true).order('created_at DESC')
+            else
+                @users = User.where(user_type_id: 4, is_active: true, building_id: params[:building_id]).order('created_at DESC')
+            end
+            
+            @users.each do |user|
+                if user.profile.present?
+                    u = user.profile
+                    @patients << u
+                end
+            end
+    
+            render json: { patients: @patients },status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
+    def admin_search
+        
+        begin
+            @profiles = []
+            profiles = Profile.search(params[:search_key]).order('created_at DESC')
+
+            profiles.each do |pat|
+                u = User.find pat[:user_id]
+                if u.present? && u[:user_type_id] == 4 && u[:is_active] 
+                    @profiles << pat
+                end
+            end
+
             render json: { patients: @profiles },status: 200
         rescue StandardError => e
             p e.to_s
