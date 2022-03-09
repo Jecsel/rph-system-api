@@ -3,7 +3,14 @@ class ClinicalRecordController < ApplicationController
 
     def index
         @clinical_records = ClinicalRecord.all.order('created_at DESC')
-        render json: {clinical_records: @clinical_records},status: 200
+        c_records = []
+        @clinical_records.each do |c|
+            if Profile.where(id: c[:patient_id]).present?
+                profile = Profile.find c[:patient_id]
+                c_records << { profile: profile, record: c }
+            end
+        end
+        render json: {clinical_records: c_records},status: 200
     end
 
     def create
@@ -135,6 +142,25 @@ class ClinicalRecordController < ApplicationController
             end
     
             render json: {clinical_records: @clinical_records},status: 200
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
+
+    def destroy
+        begin
+            clncl_record = ClinicalRecord.find(params[:id])
+
+            clncl_record.clinical_outpatient_profile.destroy_all
+            clncl_record.clinical_record_department.destroy_all   
+            clncl_record.clinical_record_society_class.destroy_all   
+            clncl_record.clinical_record_local_service.destroy_all   
+            clncl_record.clinical_record_result.destroy_all   
+            clncl_record.clinical_record_disposition.destroy_all   
+            clncl_record.destroy
         rescue StandardError => e
             p e.to_s
             render json: {

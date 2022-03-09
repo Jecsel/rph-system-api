@@ -32,7 +32,7 @@ Rails.application.routes.draw do
     get :avatar
   end
 
-  resources :clinical_record, only: [:index, :create, :show] do
+  resources :clinical_record, only: [:index, :create, :show, :destroy] do
     post 'patient_clinical_records'
     post 'update_clinical_record'
     post 'filter_clinical'
@@ -57,7 +57,7 @@ Rails.application.routes.draw do
     post 'admin_search'
   end
 
-  resources :outpatient_record, only: [:index, :create, :show] do
+  resources :outpatient_record, only: [:index, :create, :show, :destroy] do
     post 'update'
     get 'show_patient_outpatient_records'
   end

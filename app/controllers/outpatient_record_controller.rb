@@ -162,6 +162,21 @@ class OutpatientRecordController < ApplicationController
         render json: {outpatient_record: outpatient_record, outpatient_record_remarks: outpatient_record.outpatient_record_remarks },status: 200
     end
 
+    def destroy
+        begin
+            o_record = OutpatientRecord.find(params[:id])
+
+            o_record.outpatient_record_remarks.destroy_all 
+            o_record.outpatient_clinics.destroy_all
+            o_record.outpatient_clinic_services.destroy_all
+            o_record.destroy
+        rescue StandardError => e
+            p e.to_s
+            render json: {
+                error: e.to_s
+            }, status: 500
+        end
+    end
 
     private
 
