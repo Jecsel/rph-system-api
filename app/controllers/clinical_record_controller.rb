@@ -165,7 +165,7 @@ class ClinicalRecordController < ApplicationController
         end
     end
 
-    def destroy
+    def destroy_clinic
         begin
             clncl_record = ClinicalRecord.find(params[:id])
             clncl_record.update(is_active: false)

@@ -164,7 +164,7 @@ class OutpatientRecordController < ApplicationController
         render json: {outpatient_record: outpatient_record, outpatient_record_remarks: outpatient_record.outpatient_record_remarks },status: 200
     end
 
-    def destroy
+    def destroy_outpatient
         begin
             o_record = OutpatientRecord.find(params[:id])
             o_record.update(is_active: false)
