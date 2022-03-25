@@ -2,11 +2,11 @@ class ClinicalRecordController < ApplicationController
     before_action :must_be_authenticated
 
     def index
-        @clinical_records = ClinicalRecord.all.order('created_at DESC')
+        @clinical_records = ClinicalRecord.where(is_active: true).order('created_at DESC')
         c_records = []
         @clinical_records.each do |c|
-            if Profile.where(id: c[:patient_id]).present?
-                profile = Profile.find c[:patient_id]
+            if Profile.where(user_id: c[:patient_id]).present?
+                profile = Profile.where(user_id: c[:patient_id]).last
                 c_records << { profile: profile, record: c }
             end
         end
@@ -29,6 +29,7 @@ class ClinicalRecordController < ApplicationController
             clinical_record.admitting_diagnosis = create_params[:admitting_diagnosis]
             clinical_record.final_diagnosis = create_params[:final_diagnosis]
             clinical_record.management_operations = create_params[:management_operations]
+            clinical_record.is_active = true;
             clinical_record.save
             
 
@@ -135,13 +136,27 @@ class ClinicalRecordController < ApplicationController
         begin
             @clinical_records = []
             @records = []
+            c_records = []
+
             if params[:building_id] == 0
-                @clinical_records = ClinicalRecord.all.order('created_at DESC')
+                @clinical_records = ClinicalRecord.where(is_active: true).order('created_at DESC')
+                @clinical_records.each do |c|
+                    if Profile.where(user_id: c[:patient_id]).present?
+                        profile = Profile.where(user_id: c[:patient_id]).last
+                        c_records << { profile: profile, record: c }
+                    end
+                end
             else
-                @clinical_records = ClinicalRecord.where(building_id: params[:building_id]).order('created_at DESC')
+                @clinical_records = ClinicalRecord.where(building_id: params[:building_id], is_active: true).order('created_at DESC')
+                @clinical_records.each do |c|
+                    if Profile.where(user_id: c[:patient_id]).present?
+                        profile = Profile.where(user_id: c[:patient_id]).last
+                        c_records << { profile: profile, record: c }
+                    end
+                end
             end
     
-            render json: {clinical_records: @clinical_records},status: 200
+            render json: {clinical_records: c_records},status: 200
         rescue StandardError => e
             p e.to_s
             render json: {
@@ -153,14 +168,14 @@ class ClinicalRecordController < ApplicationController
     def destroy
         begin
             clncl_record = ClinicalRecord.find(params[:id])
-
-            clncl_record.clinical_outpatient_profile.destroy_all
-            clncl_record.clinical_record_department.destroy_all   
-            clncl_record.clinical_record_society_class.destroy_all   
-            clncl_record.clinical_record_local_service.destroy_all   
-            clncl_record.clinical_record_result.destroy_all   
-            clncl_record.clinical_record_disposition.destroy_all   
-            clncl_record.destroy
+            clncl_record.update(is_active: false)
+            # clncl_record.clinical_outpatient_profile.destroy_all
+            # clncl_record.clinical_record_department.destroy_all   
+            # clncl_record.clinical_record_society_class.destroy_all   
+            # clncl_record.clinical_record_local_service.destroy_all   
+            # clncl_record.clinical_record_result.destroy_all   
+            # clncl_record.clinical_record_disposition.destroy_all   
+            # clncl_record.destroy
         rescue StandardError => e
             p e.to_s
             render json: {
@@ -171,7 +186,7 @@ class ClinicalRecordController < ApplicationController
 
     def patient_clinical_records
         begin
-            p_clinical_records = ClinicalRecord.where(patient_id: params[:user_id]).order('created_at DESC')
+            p_clinical_records = ClinicalRecord.where(patient_id: params[:user_id], is_active: true).order('created_at DESC')
             render json: {clinical_records: p_clinical_records},status: 200
         rescue StandardError => e
             p e.to_s
@@ -196,6 +211,7 @@ class ClinicalRecordController < ApplicationController
             clinical_record.admitting_diagnosis = update_params[:admitting_diagnosis]
             clinical_record.final_diagnosis = update_params[:final_diagnosis]
             clinical_record.management_operations = update_params[:management_operations]
+            clinical_record.is_active = true;
             clinical_record.save
 
             if clinical_record.save!

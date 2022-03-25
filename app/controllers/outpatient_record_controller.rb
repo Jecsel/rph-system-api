@@ -2,7 +2,7 @@ class OutpatientRecordController < ApplicationController
     before_action :must_be_authenticated
     def index
         records = []
-        @outpatient_records = OutpatientRecord.all.order('created_at DESC')
+        @outpatient_records = OutpatientRecord.where(is_active: true).order('created_at DESC')
         
         @outpatient_records.each do |outpatient|
             p outpatient
@@ -32,7 +32,7 @@ class OutpatientRecordController < ApplicationController
     def show_patient_outpatient_records
         begin
             records = []
-            outpatient_records = OutpatientRecord.where(patient_id: params[:outpatient_record_id]).order('created_at DESC')
+            outpatient_records = OutpatientRecord.where(patient_id: params[:outpatient_record_id], is_active: true).order('created_at DESC')
             outpatient_records.each do |outpatient|
                 p outpatient
                 records << { 
@@ -72,7 +72,8 @@ class OutpatientRecordController < ApplicationController
                 assailant: create_params[:assailant],
                 nearest_kin: create_params[:nearest_kin],
                 patient_brought_victim: create_params[:patient_brought_victim],
-                address: create_params[:address]
+                address: create_params[:address],
+                is_active: true
             )
 
             create_params[:clinics].each do |c|
@@ -127,7 +128,8 @@ class OutpatientRecordController < ApplicationController
             assailant: update_params[:assailant],
             nearest_kin: update_params[:nearest_kin],
             patient_brought_victim: update_params[:patient_brought_victim],
-            address: update_params[:address]
+            address: update_params[:address],
+            is_active: true
         )
         p "clinics"
         p update_params[:clinics]
@@ -165,11 +167,11 @@ class OutpatientRecordController < ApplicationController
     def destroy
         begin
             o_record = OutpatientRecord.find(params[:id])
-
-            o_record.outpatient_record_remarks.destroy_all 
-            o_record.outpatient_clinics.destroy_all
-            o_record.outpatient_clinic_services.destroy_all
-            o_record.destroy
+            o_record.update(is_active: false)
+            # o_record.outpatient_record_remarks.destroy_all 
+            # o_record.outpatient_clinics.destroy_all
+            # o_record.outpatient_clinic_services.destroy_all
+            # o_record.destroy
         rescue StandardError => e
             p e.to_s
             render json: {
