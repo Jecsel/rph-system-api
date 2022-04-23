@@ -78,7 +78,71 @@ class DashboardController < ApplicationController
             end
         end
 
+        group_recovered.map{|k,v|
+            drec = group_recovered[k]
+            final_group_rec = []
+            drec.each do | r|
+                rec = ClinicalRecord.find(r[:id]) rescue nil
+
+                if !rec.nil? && rec.clinical_outpatient_profile.present?
+                    final_group_rec << {
+                        clinical_record_id: rec[:id],
+                        created_at: rec[:created_at],
+                        id: rec[:id],
+                        is_selected: rec[:id],
+                        result_id: rec[:result_id],
+                        updated_at: rec[:updated_at],
+                        records: rec, 
+                        profile: rec.clinical_outpatient_profile}
+                else
+                    final_group_rec << {
+                        clinical_record_id: r[:id],
+                        created_at: r[:created_at],
+                        id: r[:id],
+                        is_selected: r[:id],
+                        result_id: r[:result_id],
+                        updated_at: r[:updated_at],
+                        records: rec,
+                        profile: {}}
+                end
+                
+            end
+            group_recovered[k] = final_group_rec
+        }
+
         group_died = died.group_by { |p| p.created_at.beginning_of_month }
+
+        group_died.map{|k,v|
+            drec = group_died[k]
+            final_group_rec = []
+            drec.each do | r|
+                rec = ClinicalRecord.find(r[:id]) rescue nil
+
+                if !rec.nil? && rec.clinical_outpatient_profile.present?
+                    final_group_rec << {
+                        clinical_record_id: rec[:id],
+                        created_at: rec[:created_at],
+                        id: rec[:id],
+                        is_selected: rec[:id],
+                        result_id: rec[:result_id],
+                        updated_at: rec[:updated_at],
+                        records: rec, 
+                        profile: rec.clinical_outpatient_profile}
+                else
+                    final_group_rec << {
+                        clinical_record_id: r[:id],
+                        created_at: r[:created_at],
+                        id: r[:id],
+                        is_selected: r[:id],
+                        result_id: r[:result_id],
+                        updated_at: r[:updated_at],
+                        records: rec,
+                        profile: {}}
+                end
+                
+            end
+            group_died[k] = final_group_rec
+        }
 
         render json: {
             doctor: @doctors.count,
